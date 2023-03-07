@@ -1,0 +1,75 @@
+import { Router } from 'express'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import config from '../../config/index.js'
+
+import registerUser from '../../services/registerUser.js'
+import validateRegisterInput from '../../services/validation/register.js'
+import validateLoginInput from '../../services/validation/login.js'
+import User from '../../db/userModel.js'
+
+export default function (app) {
+  const route = Router()
+  app.use('/users', route)
+
+  route.post('/register', async (req, res, next) => {
+    try {
+      // validate registration info
+      const { errors, isValid } = validateRegisterInput(req.body)
+      if (!isValid) return res.status(400).json(errors)
+
+      // check db to see if user already exists, otherwise, create user
+      const user = await User.findOne({ email: req.body.email })
+      if (user) return res.status(400).json({ email: "Email already exists" })
+
+      // register user
+      const newUser = await registerUser(req.body)
+      res.json(newUser)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  route.post('/login', async (req, res, next) => {
+    try {
+      // validate login info
+      const { errors, isValid } = validateLoginInput(req.body)
+      if (!isValid) return res.status(400).json(errors)
+
+      const email = req.body.email
+      const password = req.body.password
+
+      // find user by email
+      const user = await User.findOne({ email })
+      if (!user) return res.status(404).json({ emailnotfound: "Email not found" })
+
+      // check if passwords match
+      const match = await bcrypt.compare(password, user.password)
+      if (!match) return res.status(400).json({ passwordIncorrect: "Password incorrect" })
+
+      // user matched, create jwt payload
+      const payload = {
+        id: user._id.valueOf(),
+        username: user.username,
+        email: user.email
+      }
+
+      // sign token
+      jwt.sign(
+        payload,
+        config.secretOrKey,
+        {
+          expiresIn: 2629744 // ~30 days in seconds
+        },
+        (err, token) => {
+          res.json({
+            success: true,
+            token: `Bearer ${token}`
+          })
+        }
+      )
+    } catch (error) {
+      next(error)
+    }
+  })
+}
