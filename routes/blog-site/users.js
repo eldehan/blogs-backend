@@ -19,8 +19,18 @@ export default function (app) {
       if (!isValid) return res.status(400).json(errors)
 
       // check db to see if user already exists, otherwise, create user
-      const user = await User.findOne({ email: req.body.email })
-      if (user) return res.status(400).json({ message: "Email already exists" })
+      const user = await User.findOne({
+        $or: [
+          { email: req.body.email },
+          { username: req.body.username }
+        ]
+      })
+
+      if (user) {
+        return user.username === req.body.username
+          ? res.status(400).json({ message: "Username already exists" })
+          : res.status(400).json({ message: "Email already exists" })
+      }
 
       // register user
       const newUser = await registerUser(req.body)
