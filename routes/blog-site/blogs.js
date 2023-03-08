@@ -32,7 +32,7 @@ export default function (app) {
 
       // Find the authoring user based on their id
       const user = await User.findById(authorId)
-      if (!user) return res.status(404).json({ error: 'User not found' })
+      if (!user) return res.status(404).json({ message: 'User not found' })
 
       // Create a new blog post with the author's _id
       const blogPost = new Blog({
@@ -52,11 +52,16 @@ export default function (app) {
 
   route.put('/:id', async (req, res, next) => {
     try {
+      // find and edit blog if the authorId matches the ID of the user attempting to edit it
       const updatedBlog = await Blog.findOneAndUpdate(
-        { _id: req.params.id },
+        { _id: req.params.id, author: req.authorId },
         { $set: { ...req.body } },
         { new: true }
       )
+
+      // if no results, return error message
+      if (!updatedBlog) return res.status(404).json({ message: "Unable to edit post. You might not have permission to edit this post." })
+
       res.json(updatedBlog)
     } catch (error) {
       next(error)
@@ -65,9 +70,13 @@ export default function (app) {
 
   route.delete('/:id', async (req, res, next) => {
     try {
-      const deletedBlog = await Blog.findByIdAndDelete(req.params.id)
-      if (!deletedBlog) return res.status(404).json({ message: 'Blog not found' })
-      return res.json({ message: 'Blog deleted successfully' })
+      // find and delete the blog if the authorId matches the ID of the user attempting to delete it
+      const deletedBlog = await Blog.findOneAndDelete({ _id: req.params.id, author: req.authorId })
+
+      // if no results, return error message
+      if (!deletedBlog) return res.status(404).json({ message: "Unable to delete post. You might not have permission to delete this post." })
+
+      res.json({ message: 'Blog deleted successfully' })
     } catch (error) {
       next(error)
     }
