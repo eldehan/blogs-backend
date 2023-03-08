@@ -20,7 +20,7 @@ export default function (app) {
 
       // check db to see if user already exists, otherwise, create user
       const user = await User.findOne({ email: req.body.email })
-      if (user) return res.status(400).json({ email: "Email already exists" })
+      if (user) return res.status(400).json({ message: "Email already exists" })
 
       // register user
       const newUser = await registerUser(req.body)
@@ -41,11 +41,11 @@ export default function (app) {
 
       // find user by email
       const user = await User.findOne({ email })
-      if (!user) return res.status(404).json({ emailnotfound: "Email not found" })
+      if (!user) return res.status(404).json({ message: "Email not found" })
 
       // check if passwords match
       const match = await bcrypt.compare(password, user.password)
-      if (!match) return res.status(400).json({ passwordIncorrect: "Password incorrect" })
+      if (!match) return res.status(400).json({ message: "Password incorrect" })
 
       // user matched, create jwt payload
       const payload = {
