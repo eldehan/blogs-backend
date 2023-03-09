@@ -95,18 +95,16 @@ export default function (app) {
     } catch (error) {
       next(error)
     }
-  }),
-    route.delete('/:username', async (req, res, next) => {
-      try {
-        // find and delete the blog if the authorId matches the ID of the user attempting to delete it
-        const deletedUser = await User.findOneAndDelete({ username: username })
+  })
+  // route.delete('/:username', async (req, res, next) => {
+  //   try {
+  //     const deletedUser = await User.findOneAndDelete({ username: username })
 
-        // if no results, return error message
-        if (!deletedUser) return res.status(404).json({ message: "Unable to delete account. You might not have permission to delete this account." })
+  //     if (!deletedUser) return res.status(404).json({ message: "Unable to delete account. You might not have permission to delete this account." })
 
-        res.json({ message: 'Account deleted successfully' })
-      } catch (error) {
-        next(error)
-      }
-    })
+  //     res.json({ message: 'Account deleted successfully' })
+  //   } catch (error) {
+  //     next(error)
+  //   }
+  // })
 }
