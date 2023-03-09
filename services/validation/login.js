@@ -17,7 +17,7 @@ export default function (data) {
 
   // Password checks
   if (Validator.isEmpty(data.password)) {
-    errors.message = "Password field is required";
+    errors.message = "Password field is required"
   }
 
   return {

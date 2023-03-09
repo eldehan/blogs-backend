@@ -28,12 +28,12 @@ const BlogSchema = new mongoose.Schema({
 
 BlogSchema.set('toJSON', {
   transform: (doc, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
   }
 });
 
-const Blogs = mongoose.model.Blogs || mongoose.model("Blogs", BlogSchema);
+const Blogs = mongoose.model.Blogs || mongoose.model("Blogs", BlogSchema)
 
-export default Blogs;
+export default Blogs

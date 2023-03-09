@@ -40,7 +40,7 @@ export default function (app) {
         img,
         content,
         author: user._id
-      });
+      })
 
       // Save the blog post to the database
       let newPost = await blogPost.save()

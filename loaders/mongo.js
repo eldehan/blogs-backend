@@ -7,5 +7,5 @@ export default async function () {
     useUnifiedTopology: true
   });
 
-  console.log(`MongoDB connected: ${connection.connection.host}`);
+  console.log(`MongoDB connected: ${connection.connection.host}`)
 };

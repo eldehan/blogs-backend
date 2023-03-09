@@ -24,12 +24,12 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.set('toJSON', {
   transform: (doc, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
   }
 });
 
-const Users = mongoose.model.Users || mongoose.model("Users", UserSchema);
+const Users = mongoose.model.Users || mongoose.model("Users", UserSchema)
 
-export default Users;
+export default Users

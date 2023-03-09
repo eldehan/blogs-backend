@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+process.env.NODE_ENV = process.env.NODE_ENV || 'DEV'
+const env = process.env.NODE_ENV.toUpperCase()
 
 const envFound = dotenv.config()
 
@@ -13,6 +14,6 @@ export default {
   logs: {
     morgan: process.env.MORGAN
   },
-  mongo: process.env.MONGODB_URI,
+  mongo: process.env[env + '_DB_URI'],
   secretOrKey: process.env.SECRET
 }
