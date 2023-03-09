@@ -12,6 +12,20 @@ export default function (app) {
   const route = Router()
   app.use('/users', route)
 
+  route.get('/:username', async (req, res, next) => {
+    try {
+      const user = await User.findOne({
+        username: req.params.username
+      }).select({ password: 0, email: 0 })
+
+      if (!user) return res.status(404).json({ message: "User not found" })
+
+      res.json(user)
+    } catch (error) {
+      next(error)
+    }
+  })
+
   route.post('/register', async (req, res, next) => {
     try {
       // validate registration info
