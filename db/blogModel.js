@@ -34,6 +34,6 @@ BlogSchema.set('toJSON', {
   }
 });
 
-const Blogs = mongoose.model.Blogs || mongoose.model("Blogs", BlogSchema)
+const Blogs = mongoose.model?.Blogs || mongoose.model("Blogs", BlogSchema)
 
 export default Blogs

@@ -30,6 +30,6 @@ UserSchema.set('toJSON', {
   }
 });
 
-const Users = mongoose.model.Users || mongoose.model("Users", UserSchema)
+const Users = mongoose.model?.Users || mongoose.model("Users", UserSchema)
 
 export default Users
