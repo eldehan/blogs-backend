@@ -47,8 +47,8 @@ export default function (app) {
       }
 
       // register user
-      const newUser = await registerUser(req.body)
-      res.json({ status: 'success', data: newUser, message: 'Registration successful' })
+      const newUserId = await registerUser(req.body)
+      res.json({ status: 'success', data: newUserId, message: 'Registration successful' })
     } catch (error) {
       next(error)
     }

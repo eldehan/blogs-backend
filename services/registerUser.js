@@ -12,5 +12,6 @@ export default async function (body) {
   const hash = await bcrypt.hash(newUser.password, 10)
   newUser.password = hash
 
-  return newUser.save()
+  const response = await newUser.save()
+  return { id: response._id.toString() }
 }

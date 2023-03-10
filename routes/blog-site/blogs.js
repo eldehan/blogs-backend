@@ -70,7 +70,7 @@ export default function (app) {
       )
 
       // if no results, return error message
-      if (!updatedBlog) return res.status(404).json({ status: 'error', data: null, message: "Unable to edit post. You might not have permission to edit this post." })
+      if (!updatedBlog) return res.status(404).json({ status: 'error', data: null, message: "Unable to edit post. Either the post could not be found or you do not have permission to edit it." })
 
       res.json({ status: 'success', data: updatedBlog, message: 'Blog post updated' })
     } catch (error) {
