@@ -18,6 +18,11 @@ export default function (app) {
 
   route.get('/:id', async (req, res, next) => {
     try {
+      // ensure id is valid MongoDB ObjectId format
+      if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ status: 'error', data: null, message: 'Invalid blogId' })
+      }
+
       const blog = await Blog.findById(req.params.id).populate('author')
       if (!blog) return res.status(404).json({ status: 'error', data: null, message: 'Blog not found' })
       res.json({ status: 'success', data: blog, message: 'Blog retrieved' })
@@ -52,9 +57,14 @@ export default function (app) {
 
   route.put('/:id', async (req, res, next) => {
     try {
+      // ensure id is valid MongoDB ObjectId format
+      if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ status: 'error', data: null, message: 'Invalid blogId' })
+      }
+
       // find and edit blog if the authorId matches the ID of the user attempting to edit it
       const updatedBlog = await Blog.findOneAndUpdate(
-        { _id: req.params.id, author: req.authorId },
+        { _id: req.params.id, author: req.body.author },
         { $set: { ...req.body } },
         { new: true }
       )
@@ -70,8 +80,13 @@ export default function (app) {
 
   route.delete('/:id', async (req, res, next) => {
     try {
+      // ensure id is valid MongoDB ObjectId format
+      if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ status: 'error', data: null, message: 'Invalid blogId' })
+      }
+
       // find and delete the blog if the authorId matches the ID of the user attempting to delete it
-      const deletedBlog = await Blog.findOneAndDelete({ _id: req.params.id, author: req.authorId })
+      const deletedBlog = await Blog.findOneAndDelete({ _id: req.params.id, author: req.body.author })
 
       // if no results, return error message
       if (!deletedBlog) return res.status(404).json({ status: 'error', data: null, message: "Unable to delete post. You might not have permission to delete this post." })
