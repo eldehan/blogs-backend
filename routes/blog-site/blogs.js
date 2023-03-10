@@ -10,7 +10,7 @@ export default function (app) {
   route.get('/', async (req, res, next) => {
     try {
       const blogs = await Blog.find().populate('author')
-      res.json(blogs)
+      res.json({ status: 'success', data: blogs, message: 'Blogs retrieved' })
     } catch (error) {
       next(error)
     }
@@ -19,7 +19,7 @@ export default function (app) {
   route.get('/:id', async (req, res, next) => {
     try {
       const blog = await Blog.findById(req.params.id).populate('author')
-      if (!blog) return res.status(404).json({ message: 'Blog not found' })
+      if (!blog) return res.status(404).json({ status: 'error', data: null, message: 'Blog not found' })
       res.json(blog)
     } catch (error) {
       next(error)
@@ -32,7 +32,7 @@ export default function (app) {
 
       // Find the authoring user based on their id
       const user = await User.findById(authorId)
-      if (!user) return res.status(404).json({ message: 'User not found' })
+      if (!user) return res.status(404).json({ status: 'error', data: null, message: 'User not found' })
 
       // Create a new blog post with the author's _id
       const blogPost = new Blog({
@@ -44,7 +44,7 @@ export default function (app) {
 
       // Save the blog post to the database
       let newPost = await blogPost.save()
-      res.status(201).json({ message: 'Blog post created', data: newPost })
+      res.status(201).json({ status: 'success', data: newPost, message: 'Blog post created' })
     } catch (error) {
       next(error)
     }
@@ -60,9 +60,9 @@ export default function (app) {
       )
 
       // if no results, return error message
-      if (!updatedBlog) return res.status(404).json({ message: "Unable to edit post. You might not have permission to edit this post." })
+      if (!updatedBlog) return res.status(404).json({ status: 'error', data: null, message: "Unable to edit post. You might not have permission to edit this post." })
 
-      res.json(updatedBlog)
+      res.json({ status: 'success', data: updatedBlog, message: 'Blog post updated' })
     } catch (error) {
       next(error)
     }
@@ -74,9 +74,9 @@ export default function (app) {
       const deletedBlog = await Blog.findOneAndDelete({ _id: req.params.id, author: req.authorId })
 
       // if no results, return error message
-      if (!deletedBlog) return res.status(404).json({ message: "Unable to delete post. You might not have permission to delete this post." })
+      if (!deletedBlog) return res.status(404).json({ status: 'error', data: null, message: "Unable to delete post. You might not have permission to delete this post." })
 
-      res.json({ message: 'Blog deleted successfully' })
+      res.json({ status: 'success', data: null, message: 'Blog deleted successfully' })
     } catch (error) {
       next(error)
     }

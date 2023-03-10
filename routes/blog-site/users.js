@@ -18,9 +18,9 @@ export default function (app) {
         username: req.params.username
       }).select({ password: 0, email: 0 })
 
-      if (!user) return res.status(404).json({ message: "User not found" })
+      if (!user) return res.status(404).json({ status: 'error', data: null, message: "User not found" })
 
-      res.json(user)
+      res.json({ status: 'success', data: user, message: 'User found' })
     } catch (error) {
       next(error)
     }
@@ -30,7 +30,7 @@ export default function (app) {
     try {
       // validate registration info
       const { errors, isValid } = validateRegisterInput(req.body)
-      if (!isValid) return res.status(400).json(errors)
+      if (!isValid) return res.status(400).json({ status: 'error', data: null, message: errors.message })
 
       // check db to see if user already exists, otherwise, create user
       const user = await User.findOne({
@@ -42,13 +42,13 @@ export default function (app) {
 
       if (user) {
         return user.username === req.body.username
-          ? res.status(400).json({ message: "Username already exists" })
-          : res.status(400).json({ message: "Email already exists" })
+          ? res.status(400).json({ status: 'error', data: null, message: "Username already exists" })
+          : res.status(400).json({ status: 'error', data: null, message: "Email already exists" })
       }
 
       // register user
       const newUser = await registerUser(req.body)
-      res.json(newUser)
+      res.json({ status: 'success', data: newUser, message: 'Registration successful' })
     } catch (error) {
       next(error)
     }
@@ -58,18 +58,18 @@ export default function (app) {
     try {
       // validate login info
       const { errors, isValid } = validateLoginInput(req.body)
-      if (!isValid) return res.status(400).json(errors)
+      if (!isValid) return res.status(400).json({ status: 'error', data: null, message: errors.message })
 
       const email = req.body.email
       const password = req.body.password
 
       // find user by email
       const user = await User.findOne({ email })
-      if (!user) return res.status(404).json({ message: "Email not found" })
+      if (!user) return res.status(404).json({ status: 'error', data: null, message: "Email not found" })
 
       // check if passwords match
       const match = await bcrypt.compare(password, user.password)
-      if (!match) return res.status(400).json({ message: "Password incorrect" })
+      if (!match) return res.status(400).json({ status: 'error', data: null, message: "Password incorrect" })
 
       // user matched, create jwt payload
       const payload = {
@@ -87,8 +87,11 @@ export default function (app) {
         },
         (err, token) => {
           res.json({
-            success: true,
-            token: `Bearer ${token}`
+            status: 'success',
+            data: {
+              token: `Bearer ${token}`
+            },
+            message: 'Login successful'
           })
         }
       )
