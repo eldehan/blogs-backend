@@ -20,7 +20,7 @@ export default function (app) {
     try {
       const blog = await Blog.findById(req.params.id).populate('author')
       if (!blog) return res.status(404).json({ status: 'error', data: null, message: 'Blog not found' })
-      res.json(blog)
+      res.json({ status: 'success', data: blog, message: 'Blog retrieved' })
     } catch (error) {
       next(error)
     }
