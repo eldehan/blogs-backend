@@ -33,10 +33,10 @@ export default function (app) {
 
   route.post('/', async (req, res, next) => {
     try {
-      const { title, content, img, authorId } = req.body
+      const { title, content, img, author } = req.body
 
       // Find the authoring user based on their id
-      const user = await User.findById(authorId)
+      const user = await User.findById(author)
       if (!user) return res.status(404).json({ status: 'error', data: null, message: 'User not found' })
 
       // Create a new blog post with the author's _id

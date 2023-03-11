@@ -38,7 +38,7 @@ describe("POST /blog-site/blogs/", () => {
     const blogData1 = {
       title: "testBlog1",
       content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. At deserunt reiciendis aliquam harum itaque aspernatur iste, numquam autem accusamus eaque!",
-      authorId: userId
+      author: userId
     }
 
     await request(app)
